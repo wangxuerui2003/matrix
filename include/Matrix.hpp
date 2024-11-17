@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <initializer_list>
+#include <exception>
 
 template <typename K>
 class Vector;
@@ -14,8 +15,8 @@ class Matrix {
 	public:
 		Matrix(const std::initializer_list<std::initializer_list<K> >& values);
 
-		// Matrix(const Matrix<K>& copy);
-		// Matrix& operator=(const Matrix<K>& copy);
+		Matrix(const Matrix<K>& copy);
+		Matrix& operator=(const Matrix<K>& copy);
 		virtual ~Matrix();
 
 		// member functions
@@ -28,8 +29,12 @@ class Matrix {
 
 		// exceptions
 		class InvalidShapeException : public std::exception {
-			const char *what() const noexcept;
+			public:
+				const char *what() const noexcept;
 		};
+
+		// linear operations
+		// TODO: add, sub, scl
 
 	private:
 		std::vector<std::vector<K> > _data;
@@ -38,20 +43,7 @@ class Matrix {
 };
 
 template <typename K>
-std::ostream& operator<<(std::ostream& os, const Matrix<K>& m) {
-	const std::vector<std::vector<K> >& data = m.getData();
-
-	for (const std::vector<K>& row : data) {
-		os << "[";
-		for (const K& v : row) {
-			os << v << ", ";
-		}
-		os << "]\n";
-	}
-	os << std::endl;
-
-	return os;
-}
+std::ostream& operator<<(std::ostream& os, const Matrix<K>& m);
 
 #include "Matrix.tpp"
 

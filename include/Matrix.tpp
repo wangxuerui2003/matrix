@@ -12,9 +12,12 @@ Matrix<K>::Matrix(const std::initializer_list<std::initializer_list<K> >& values
 		if (cols != 0 && row.size() != cols) {
 			throw InvalidShapeException();
 		}
-		cols = values.size();
+		cols = row.size();
 		_data.emplace_back(row);
 	}
+
+	this->_rows = values.size();
+	this->_cols = cols;
 }
 
 // destructor
@@ -52,7 +55,25 @@ Vector<K> Matrix<K>::reshapeToVector(void) const {
 	return Vector<K>{flatData};
 }
 
+template <typename K>
+std::ostream& operator<<(std::ostream& os, const Matrix<K>& m) {
+	const std::vector<std::vector<K> >& data = m.getData();
+
+	for (const std::vector<K>& row : data) {
+		os << "[";
+		for (size_t i = 0; i < row.size(); ++i) {
+			os << row[i];
+			if (i != row.size() - 1) {
+				os << ", ";
+			}
+		}
+		os << "]" << std::endl;
+	}
+
+	return os;
+}
+
 template<typename K>
 const char *Matrix<K>::InvalidShapeException::what() const noexcept {
-	return "Invalid shape of input or matrix.";
+	return "Invalid shape input or matrix.";
 }

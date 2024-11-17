@@ -17,14 +17,17 @@ class Vector {
 
 		Vector(const Matrix<K>& copy);
 		Vector& operator=(const Vector<K>& copy);
-		virtual ~Vector() {}
+		virtual ~Vector();
 
 		// member functions
-		size_t size(void) const {
-			return _size;
-		}
-
+		size_t size(void) const;
 		Matrix<K> reshapeToMatrix(void) const;
+
+		// getters and setters
+		const std::vector<K>& getData(void) const;
+
+		// Linear Operations
+		// TODO: add, sub, scl
 
 	private:
 		std::vector<K> _data;
@@ -32,13 +35,7 @@ class Vector {
 };
 
 template <typename K>
-std::ostream& operator<<(std::ostream& os, const Vector<K>& vec) {
-	for (const K& v : vec) {
-		os << "[" << v << "]\n";
-	}
-	os << std::endl;
-	return os;
-}
+std::ostream& operator<<(std::ostream& os, const Vector<K>& vec);
 
 #include "Vector.tpp"
 
