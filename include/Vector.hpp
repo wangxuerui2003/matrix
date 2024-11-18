@@ -26,8 +26,20 @@ class Vector {
 		// getters and setters
 		const std::vector<K>& getData(void) const;
 
+		// exceptions
+		class VectorException : public std::exception {
+			public:
+				VectorException();
+				VectorException(const std::string& msg);
+				const char *what() const noexcept;
+			private:
+				std::string _message;
+		};
+
 		// Linear Operations
-		// TODO: add, sub, scl
+		void add(const Vector<K>& v);
+		void sub(const Vector<K>& v);
+		void scl(const K& a);
 
 	private:
 		std::vector<K> _data;

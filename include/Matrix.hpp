@@ -14,6 +14,7 @@ template<typename K>
 class Matrix {
 	public:
 		Matrix(const std::initializer_list<std::initializer_list<K> >& values);
+		Matrix(const std::initializer_list<K>& values);
 
 		Matrix(const Matrix<K>& copy);
 		Matrix& operator=(const Matrix<K>& copy);
@@ -28,13 +29,19 @@ class Matrix {
 		const std::vector<std::vector<K> >& getData(void) const;
 
 		// exceptions
-		class InvalidShapeException : public std::exception {
+		class MatrixException : public std::exception {
 			public:
+				MatrixException();
+				MatrixException(const std::string& msg);
 				const char *what() const noexcept;
+			private:
+				std::string _message;
 		};
 
 		// linear operations
-		// TODO: add, sub, scl
+		void add(const Matrix<K>& m);
+		void sub(const Matrix<K>& m);
+		void scl(const K& a);
 
 	private:
 		std::vector<std::vector<K> > _data;

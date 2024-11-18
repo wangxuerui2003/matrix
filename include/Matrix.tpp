@@ -4,13 +4,13 @@
 template<typename K>
 Matrix<K>::Matrix(const std::initializer_list<std::initializer_list<K> >& values) {
 	if (values.size() == 0) {
-		throw InvalidShapeException();
+		throw MatrixException();
 	}
 
 	size_t cols = 0;
 	for (const std::initializer_list<K>& row : values) {
 		if (cols != 0 && row.size() != cols) {
-			throw InvalidShapeException();
+			throw MatrixException();
 		}
 		cols = row.size();
 		_data.emplace_back(row);
@@ -18,6 +18,18 @@ Matrix<K>::Matrix(const std::initializer_list<std::initializer_list<K> >& values
 
 	this->_rows = values.size();
 	this->_cols = cols;
+}
+
+// 1 row constructor
+template<typename K>
+Matrix<K>::Matrix(const std::initializer_list<K>& values) {
+	if (values.size() == 0) {
+		throw MatrixException();
+	}
+
+	this->_data.emplace_back(values);
+	this->_rows = 1;
+	this->_cols = values.size();
 }
 
 // destructor
@@ -41,18 +53,8 @@ bool Matrix<K>::isSquare(void) const {
 
 template<typename K>
 Vector<K> Matrix<K>::reshapeToVector(void) const {
-	if (_cols != 1) {
-		throw InvalidShapeException();
-	}
-
-	// flat data
-	std::vector<K> flatData;
-	std::vector<std::vector<K> >& data = getData();
-	for (const std::vector<K>& row : data) {
-		flatData.push_back(row[0]);
-	}
-
-	return Vector<K>{flatData};
+	// TODO
+	return Vector<K>{1, 2, 3};
 }
 
 template <typename K>
@@ -74,6 +76,51 @@ std::ostream& operator<<(std::ostream& os, const Matrix<K>& m) {
 }
 
 template<typename K>
-const char *Matrix<K>::InvalidShapeException::what() const noexcept {
-	return "Invalid shape input or matrix.";
+Matrix<K>::MatrixException::MatrixException() : _message("Invalid matrix operation.") {}
+
+template<typename K>
+Matrix<K>::MatrixException::MatrixException(const std::string& msg) : _message(msg) {}
+
+template<typename K>
+const char *Matrix<K>::MatrixException::what() const noexcept {
+	return _message.c_str();
+}
+
+template <typename K>
+void Matrix<K>::add(const Matrix<K>& m) {
+	std::pair<size_t, size_t> mShape = m.shape();
+	if (mShape.first != _rows || mShape.second != _cols) {
+		throw MatrixException("Both matrices should have the same shape when adding.");
+	}
+
+	const std::vector<std::vector<K> >& mData = m.getData();
+	for (size_t i = 0; i < mData.size(); ++i) {
+		for (size_t j = 0; j < _cols; ++j) {
+			this->_data[i][j] += mData[i][j];
+		}
+	}
+}
+
+template <typename K>
+void Matrix<K>::sub(const Matrix<K>& m) {
+	std::pair<size_t, size_t> mShape = m.shape();
+	if (mShape.first != _rows || mShape.second != _cols) {
+		throw MatrixException("Both matrices should have the same shape when substracting.");
+	}
+
+	const std::vector<std::vector<K> >& mData = m.getData();
+	for (size_t i = 0; i < mData.size(); ++i) {
+		for (size_t j = 0; j < _cols; ++j) {
+			this->_data[i][j] -= mData[i][j];
+		}
+	}
+}
+
+template <typename K>
+void Matrix<K>::scl(const K& a) {
+	for (size_t i = 0; i < _rows; ++i) {
+		for (size_t j = 0; j < _cols; ++j) {
+			_data[i][j] *= a;
+		}
+	}
 }
