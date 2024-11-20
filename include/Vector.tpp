@@ -1,9 +1,30 @@
 #include "Vector.hpp"
 
-// default constructor
+// default constructor with dim dimensions and all values v
 template<typename K>
-Vector<K>::Vector(const std::initializer_list<K>& values) : _data(values) {
-	this->_size = values.size();
+Vector<K>::Vector(size_t dim, K v) : _data(dim, v), _size(dim) {
+	if (dim <= 0) {
+		throw std::invalid_argument("Dimension should be greater than 0.");
+	}
+}
+
+
+// initializer list constructor
+template<typename K>
+Vector<K>::Vector(const std::initializer_list<K>& values) : _data(values), _size(values.size()) {}
+
+// copy constructor
+template<typename K>
+Vector<K>::Vector(const Vector<K>& copy) {
+	*this = copy;
+}
+
+// copy assignment operator overload
+template<typename K>
+Vector<K>& Vector<K>::operator=(const Vector<K>& copy) {
+	_size = copy.size();
+	_data = copy.getData();
+	return *this;
 }
 
 // destructor
@@ -14,6 +35,15 @@ template<typename K>
 const std::vector<K>& Vector<K>::getData(void) const {
 	return _data;
 }
+
+template<typename K>
+void Vector<K>::setCoord(size_t dim, K value) {
+	if (dim >= _data.size()) {
+		throw std::out_of_range("Index out of range");
+	}
+	_data[dim] = value;
+}
+
 
 template<typename K>
 size_t Vector<K>::size(void) const {
@@ -75,4 +105,24 @@ void Vector<K>::scl(const K& a) {
 	for (size_t i = 0; i < this->_data.size(); ++i) {
 		this->_data[i] *= a;
 	}	
+}
+
+template <typename K>
+Vector<K> linearCombination(std::vector<Vector<K> >& u, std::vector<K>& coefs) {
+	if (u.size() != coefs.size() || u.size() == 0) {
+		throw typename Vector<K>::VectorException("Linear combination number of vectors in u not equal to number of coefs.");
+	}
+
+	size_t dimensions = u[0].size();
+	Vector<K> result(dimensions, 0);
+	for (size_t dim = 0; dim < dimensions; ++dim) {
+		K sum = 0;
+		for (size_t index = 0; index < u.size(); ++index) {
+			const std::vector<K>& data = u[index].getData();
+			sum = std::fma(data[dim], coefs[index], sum);
+		}
+		result.setCoord(dim, sum);
+	}
+
+	return result;
 }

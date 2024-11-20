@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <initializer_list>
+#include <cmath>
 
 template <typename K>
 class Matrix;
@@ -12,11 +13,12 @@ class Matrix;
 template<typename K>
 class Vector {
 	public:
+		Vector(size_t dim, K v);
 		Vector(const std::initializer_list<K>& values);
 		Vector(const std::vector<K>& values);
 
-		Vector(const Matrix<K>& copy);
-		Vector& operator=(const Vector<K>& copy);
+		Vector(const Vector<K>& copy);
+		Vector<K>& operator=(const Vector<K>& copy);
 		virtual ~Vector();
 
 		// member functions
@@ -25,6 +27,7 @@ class Vector {
 
 		// getters and setters
 		const std::vector<K>& getData(void) const;
+		void setCoord(size_t dim, K value);
 
 		// exceptions
 		class VectorException : public std::exception {
@@ -46,8 +49,13 @@ class Vector {
 		size_t _size;
 };
 
+// overload output operator to print out the vector
 template <typename K>
 std::ostream& operator<<(std::ostream& os, const Vector<K>& vec);
+
+// linear_combination (ex01)
+template <typename K>
+Vector<K> linearCombination(std::vector<Vector<K> >& u, std::vector<K>& coefs);
 
 #include "Vector.tpp"
 
