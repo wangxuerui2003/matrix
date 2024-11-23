@@ -13,7 +13,7 @@ Matrix<K>::Matrix(const std::initializer_list<std::initializer_list<K> >& values
 			throw MatrixException();
 		}
 		cols = row.size();
-		_data.emplace_back(row);
+		_data.insert(_data.end(), row.begin(), row.end());
 	}
 
 	this->_rows = values.size();
@@ -37,7 +37,7 @@ template<typename K>
 Matrix<K>::~Matrix() {}
 
 template<typename K>
-const std::vector<std::vector<K> >& Matrix<K>::getData(void) const {
+const std::vector<K>& Matrix<K>::getData(void) const {
 	return _data;
 }
 
@@ -59,13 +59,16 @@ Vector<K> Matrix<K>::reshapeToVector(void) const {
 
 template <typename K>
 std::ostream& operator<<(std::ostream& os, const Matrix<K>& m) {
-	const std::vector<std::vector<K> >& data = m.getData();
+	const std::vector<K>& data = m.getData();
+	const std::pair<size_t, size_t> shape = m.shape();
+	size_t rows = shape.first;
+	size_t cols = shape.second;
 
-	for (const std::vector<K>& row : data) {
+	for (size_t i = 0; i < rows; ++i) {
 		os << "[";
-		for (size_t i = 0; i < row.size(); ++i) {
-			os << row[i];
-			if (i != row.size() - 1) {
+		for (size_t j = 0; j < cols; ++j) {
+			os << data[i * cols + j];
+			if (j != cols - 1) {
 				os << ", ";
 			}
 		}
@@ -93,11 +96,9 @@ void Matrix<K>::add(const Matrix<K>& m) {
 		throw MatrixException("Both matrices should have the same shape when adding.");
 	}
 
-	const std::vector<std::vector<K> >& mData = m.getData();
+	const std::vector<K>& mData = m.getData();
 	for (size_t i = 0; i < mData.size(); ++i) {
-		for (size_t j = 0; j < _cols; ++j) {
-			this->_data[i][j] += mData[i][j];
-		}
+		_data[i] += mData[i];
 	}
 }
 
@@ -108,19 +109,15 @@ void Matrix<K>::sub(const Matrix<K>& m) {
 		throw MatrixException("Both matrices should have the same shape when substracting.");
 	}
 
-	const std::vector<std::vector<K> >& mData = m.getData();
+	const std::vector<K>& mData = m.getData();
 	for (size_t i = 0; i < mData.size(); ++i) {
-		for (size_t j = 0; j < _cols; ++j) {
-			this->_data[i][j] -= mData[i][j];
-		}
+		_data[i] -= mData[i];
 	}
 }
 
 template <typename K>
 void Matrix<K>::scl(const K& a) {
-	for (size_t i = 0; i < _rows; ++i) {
-		for (size_t j = 0; j < _cols; ++j) {
-			_data[i][j] *= a;
-		}
+	for (size_t i = 0; i < _data.size(); ++i) {
+		_data[i] *= a;
 	}
 }

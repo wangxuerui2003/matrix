@@ -26,7 +26,7 @@ class Matrix {
 		Vector<K> reshapeToVector(void) const;
 
 		// getters and setters
-		const std::vector<std::vector<K> >& getData(void) const;
+		const std::vector<K>& getData(void) const;
 
 		// exceptions
 		class MatrixException : public std::exception {
@@ -44,7 +44,7 @@ class Matrix {
 		void scl(const K& a);
 
 	private:
-		std::vector<std::vector<K> > _data;
+		std::vector<K> _data;
 		size_t _rows;
 		size_t _cols;
 };
