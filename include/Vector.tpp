@@ -32,6 +32,11 @@ template<typename K>
 Vector<K>::~Vector() {}
 
 template<typename K>
+Vector<K> Vector<K>::from(const std::initializer_list<K>& values) {
+	return values;
+}
+
+template<typename K>
 const std::vector<K>& Vector<K>::getData(void) const {
 	return _data;
 }
@@ -107,22 +112,24 @@ void Vector<K>::scl(const K& a) {
 	}	
 }
 
+
 template <typename K>
-Vector<K> linearCombination(std::vector<Vector<K> >& u, std::vector<K>& coefs) {
-	if (u.size() != coefs.size() || u.size() == 0) {
-		throw typename Vector<K>::VectorException("Linear combination number of vectors in u not equal to number of coefs.");
-	}
+Vector<K> Vector<K>::operator+(const Vector<K>& other) {
+	Vector<K> result(*this);
+	result.add(other);
+	return result;
+}
 
-	size_t dimensions = u[0].size();
-	Vector<K> result(dimensions, 0);
-	for (size_t dim = 0; dim < dimensions; ++dim) {
-		K sum = 0;
-		for (size_t index = 0; index < u.size(); ++index) {
-			const std::vector<K>& data = u[index].getData();
-			sum = std::fma(data[dim], coefs[index], sum);
-		}
-		result.setCoord(dim, sum);
-	}
+template <typename K>
+Vector<K> Vector<K>::operator-(const Vector<K>& other) {
+	Vector<K> result(*this);
+	result.sub(other);
+	return result;
+}
 
+template <typename K>
+Vector<K> Vector<K>::operator*(K k) {
+	Vector<K> result(*this);
+	result.scl(k);
 	return result;
 }

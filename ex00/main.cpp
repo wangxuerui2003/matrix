@@ -1,6 +1,7 @@
 #include "Vector.hpp"
 #include "Matrix.hpp"
 #include "test.h"
+#include "linalg.h"
 #include <iostream>
 
 int main(void) {

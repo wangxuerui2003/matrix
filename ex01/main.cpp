@@ -1,4 +1,5 @@
 #include "Vector.hpp"
+#include "linalg.h"
 #include "test.h"
 #include <iostream>
 

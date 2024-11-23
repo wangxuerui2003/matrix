@@ -32,6 +32,22 @@ Matrix<K>::Matrix(const std::initializer_list<K>& values) {
 	this->_cols = values.size();
 }
 
+// copy constructor
+template<typename K>
+Matrix<K>::Matrix(const Matrix<K>& copy) {
+	*this = copy;
+}
+
+// copy assignment operator overload
+template<typename K>
+Matrix<K>& Matrix<K>::operator=(const Matrix<K>& copy) {
+	const std::pair<size_t, size_t> shape = copy.shape();
+	_rows = shape.first;
+	_cols = shape.second;
+	_data = copy.getData();
+	return *this;
+}
+
 // destructor
 template<typename K>
 Matrix<K>::~Matrix() {}
@@ -120,4 +136,25 @@ void Matrix<K>::scl(const K& a) {
 	for (size_t i = 0; i < _data.size(); ++i) {
 		_data[i] *= a;
 	}
+}
+
+template <typename K>
+Matrix<K> Matrix<K>::operator+(const Matrix<K>& other) {
+	Matrix<K> result(*this);
+	result.add(other);
+	return result;
+}
+
+template <typename K>
+Matrix<K> Matrix<K>::operator-(const Matrix<K>& other) {
+	Matrix<K> result(*this);
+	result.sub(other);
+	return result;
+}
+
+template <typename K>
+Matrix<K> Matrix<K>::operator*(K k) {
+	Matrix<K> result(*this);
+	result.scl(k);
+	return result;
 }

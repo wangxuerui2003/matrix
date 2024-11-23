@@ -21,6 +21,8 @@ class Vector {
 		Vector<K>& operator=(const Vector<K>& copy);
 		virtual ~Vector();
 
+		static Vector<K> from(const std::initializer_list<K>& values);
+
 		// member functions
 		size_t size(void) const;
 		Matrix<K> reshapeToMatrix(void) const;
@@ -44,6 +46,15 @@ class Vector {
 		void sub(const Vector<K>& v);
 		void scl(const K& a);
 
+		Vector<K> operator+(K k);
+		Vector<K> operator+(const Vector<K>& other);
+		Vector<K> operator-(K k);
+		Vector<K> operator-(const Vector<K>& other);
+		Vector<K> operator*(K k);
+		Vector<K> operator*(const Vector<K>& other);
+		Vector<K> operator/(K k);
+		Vector<K> operator/(const Vector<K>& other);
+
 	private:
 		std::vector<K> _data;
 		size_t _size;
@@ -52,10 +63,6 @@ class Vector {
 // overload output operator to print out the vector
 template <typename K>
 std::ostream& operator<<(std::ostream& os, const Vector<K>& vec);
-
-// linear_combination (ex01)
-template <typename K>
-Vector<K> linearCombination(std::vector<Vector<K> >& u, std::vector<K>& coefs);
 
 #include "Vector.tpp"
 

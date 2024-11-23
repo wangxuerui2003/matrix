@@ -43,6 +43,15 @@ class Matrix {
 		void sub(const Matrix<K>& m);
 		void scl(const K& a);
 
+		Matrix<K> operator-(K k);
+		Matrix<K> operator+(const Matrix<K>& other);
+		Matrix<K> operator+(K k);
+		Matrix<K> operator-(const Matrix<K>& other);
+		Matrix<K> operator*(K k);
+		Matrix<K> operator*(const Matrix<K>& other);
+		Matrix<K> operator/(float t);
+		Matrix<K> operator/(const Matrix<K>& other);
+
 	private:
 		std::vector<K> _data;
 		size_t _rows;
