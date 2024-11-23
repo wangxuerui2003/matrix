@@ -55,6 +55,8 @@ class Vector {
 		Vector<K> operator/(K k);
 		Vector<K> operator/(const Vector<K>& other);
 
+		K dot(const Vector<K>& v);
+
 	private:
 		std::vector<K> _data;
 		size_t _size;

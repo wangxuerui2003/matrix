@@ -133,3 +133,18 @@ Vector<K> Vector<K>::operator*(K k) {
 	result.scl(k);
 	return result;
 }
+
+template <typename K>
+K Vector<K>::dot(const Vector<K>& v) {
+	if (v.size() != _size) {
+		throw VectorException("Dot product between 2 vectors must have the same size.");
+	}
+
+	K product = 0;
+	const std::vector<K>& vData = v.getData();
+	for (size_t i = 0; i < _size; ++i) {
+		product += _data[i] * vData[i];
+	}
+
+	return product;
+}
