@@ -1,7 +1,6 @@
 #include "Vector.hpp"
 #include "linalg.h"
 #include "test.h"
-#include <iostream>
 
 int main(void) {
 	TEST_TITLE("Test linear combination");

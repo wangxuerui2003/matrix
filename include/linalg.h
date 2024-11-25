@@ -3,6 +3,7 @@
 
 #include "Vector.hpp"
 #include "Matrix.hpp"
+#include <type_traits>
 
 // linear combination (ex01)
 template <typename K>

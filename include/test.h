@@ -1,6 +1,9 @@
 #ifndef TEST_H
 #define TEST_H
 
+#include <iostream>
+#include <iomanip>
+
 #define TEST_SPLIT() \
     printf("\n\033[1;33m========================================\033[0m\n\n")
 

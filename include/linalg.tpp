@@ -23,5 +23,8 @@ Vector<K> linearCombination(std::vector<Vector<K> >& u, std::vector<K>& coefs) {
 
 template <typename V>
 V lerp(V u, V v, float t) {
+	if constexpr (std::is_arithmetic_v<V>) {
+		return std::fma(v - u, t, u);
+	}
 	return u + (v - u) * t;
 }

@@ -2,7 +2,6 @@
 #include "Matrix.hpp"
 #include "test.h"
 #include "linalg.h"
-#include <iostream>
 
 int main(void) {
 	TEST_TITLE("test printing vector and its attributes");
