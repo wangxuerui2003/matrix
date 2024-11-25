@@ -6,6 +6,8 @@
 #include <vector>
 #include <initializer_list>
 #include <cmath>
+#include <numeric>
+#include <algorithm>
 
 template <typename K>
 class Matrix;
@@ -56,6 +58,10 @@ class Vector {
 		Vector<K> operator/(const Vector<K>& other);
 
 		K dot(const Vector<K>& v);
+
+		float norm_1(void) const;
+		float norm(void) const;
+		float norm_inf(void) const;
 
 	private:
 		std::vector<K> _data;

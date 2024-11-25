@@ -148,3 +148,23 @@ K Vector<K>::dot(const Vector<K>& v) {
 
 	return product;
 }
+
+
+template <typename K>
+float Vector<K>::norm_1(void) const {
+	return std::accumulate(_data.begin(), _data.end(), 0,
+		[](K total, K value) { return total + abs(value); });
+}
+
+template <typename K>
+float Vector<K>::norm(void) const {
+	float sum = std::accumulate(_data.begin(), _data.end(), 0,
+		[](K total, K value) { return total + pow(value, 2); });
+	return sqrt(sum);
+}
+
+template <typename K>
+float Vector<K>::norm_inf(void) const {
+	return abs(*std::max_element(_data.begin(), _data.end(),
+		[](K a, K b) { return abs(a) < abs(b); }));
+}
