@@ -28,3 +28,8 @@ V lerp(V u, V v, float t) {
 	}
 	return u + (v - u) * t;
 }
+
+template <typename K>
+float angle_cos(Vector<K>& u, Vector<K>& v) {
+	return u.dot(v) / (u.norm() * v.norm());
+}
