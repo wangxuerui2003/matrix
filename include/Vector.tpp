@@ -135,6 +135,14 @@ Vector<K> Vector<K>::operator*(K k) {
 }
 
 template <typename K>
+K& Vector<K>::operator[](size_t index) {
+	if (index > _data.size()) {
+		throw std::out_of_range("Index out of range.");
+	}
+	return _data[index];
+}
+
+template <typename K>
 K Vector<K>::dot(const Vector<K>& v) {
 	if (v.size() != _size) {
 		throw VectorException("Dot product between 2 vectors must have the same size.");

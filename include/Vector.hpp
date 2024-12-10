@@ -57,6 +57,8 @@ class Vector {
 		Vector<K> operator/(K k);
 		Vector<K> operator/(const Vector<K>& other);
 
+		K& operator[](size_t index);
+
 		K dot(const Vector<K>& v);
 
 		float norm_1(void) const;

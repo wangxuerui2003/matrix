@@ -33,3 +33,15 @@ template <typename K>
 float angle_cos(Vector<K>& u, Vector<K>& v) {
 	return u.dot(v) / (u.norm() * v.norm());
 }
+
+template <typename K>
+Vector<K> cross_product(Vector<K>& u, Vector<K>& v) {
+	if (u.size() != 3 || v.size() != 3) {
+		throw std::invalid_argument("Both vector u and v should be 3D.");
+	}
+
+	K p0 = u[1] * v[2] - u[2] * v[1];
+	K p1 = u[2] * v[0] - u[0] * v[2];
+	K p2 = u[0] * v[1] - u[1] * v[0];
+	return {p0, p1, p2};
+}

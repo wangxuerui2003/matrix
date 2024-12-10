@@ -4,13 +4,13 @@
 template<typename K>
 Matrix<K>::Matrix(const std::initializer_list<std::initializer_list<K> >& values) {
 	if (values.size() == 0) {
-		throw MatrixException();
+		throw MatrixException("Matrix can't have size 0.");
 	}
 
 	size_t cols = 0;
 	for (const std::initializer_list<K>& row : values) {
 		if (cols != 0 && row.size() != cols) {
-			throw MatrixException();
+			throw MatrixException("Matrix rows have different number of columns.");
 		}
 		cols = row.size();
 		_data.insert(_data.end(), row.begin(), row.end());
@@ -24,7 +24,7 @@ Matrix<K>::Matrix(const std::initializer_list<std::initializer_list<K> >& values
 template<typename K>
 Matrix<K>::Matrix(const std::initializer_list<K>& values) {
 	if (values.size() == 0) {
-		throw MatrixException();
+		throw MatrixException("Matrix can't have size 0.");
 	}
 
 	this->_data.emplace_back(values);
