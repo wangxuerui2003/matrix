@@ -40,8 +40,8 @@ Vector<K> cross_product(Vector<K>& u, Vector<K>& v) {
 		throw std::invalid_argument("Both vector u and v should be 3D.");
 	}
 
-	K p0 = u[1] * v[2] - u[2] * v[1];
-	K p1 = u[2] * v[0] - u[0] * v[2];
-	K p2 = u[0] * v[1] - u[1] * v[0];
+	K p0 = std::fma(u[1], v[2], -(std::fma(u[2], v[1], 0)));
+	K p1 = std::fma(u[2], v[0], -(std::fma(u[0], v[2], 0)));
+	K p2 = std::fma(u[0], v[1], -(std::fma(u[1], v[0], 0)));
 	return {p0, p1, p2};
 }
