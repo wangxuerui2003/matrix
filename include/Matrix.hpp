@@ -10,11 +10,13 @@
 template <typename K>
 class Vector;
 
+// Transformation of space
 template<typename K>
 class Matrix {
 	public:
 		Matrix(const std::initializer_list<std::initializer_list<K> >& values);
 		Matrix(const std::initializer_list<K>& values);
+		Matrix(size_t rows, size_t cols, K value);
 
 		Matrix(const Matrix<K>& copy);
 		Matrix& operator=(const Matrix<K>& copy);
@@ -51,6 +53,50 @@ class Matrix {
 		Matrix<K> operator*(const Matrix<K>& other);
 		Matrix<K> operator/(float t);
 		Matrix<K> operator/(const Matrix<K>& other);
+
+		// linear map, matrix multiplication
+		Vector<K> mul_vec(Vector<K> vec) const;
+		Matrix<K> mul_mat(Matrix<K> mat) const;
+
+	private:
+		// For operator[][] on a matrix
+		class RowProxy {
+		private:
+			float* rowStart;
+			size_t rowLength;
+
+		public:
+			RowProxy(float* start, size_t length) : rowStart(start), rowLength(length) {}
+
+			float& operator[](size_t col) {
+				if (col >= rowLength) {
+					throw std::out_of_range("Column index out of range");
+				}
+				return rowStart[col];
+			}
+
+			const float& operator[](size_t col) const {
+				if (col >= rowLength) {
+					throw std::out_of_range("Column index out of range");
+				}
+				return rowStart[col];
+			}
+		};
+
+	public:
+		RowProxy operator[](size_t row) {
+			if (row >= _rows) {
+				throw std::out_of_range("Row index out of range");
+			}
+			return RowProxy(&_data[row * _cols], _cols);
+		}
+
+		const RowProxy operator[](size_t row) const {
+			if (row >= _rows) {
+				throw std::out_of_range("Row index out of range");
+			}
+			return RowProxy(&_data[row * _cols], _cols);
+		}
 
 	private:
 		std::vector<K> _data;

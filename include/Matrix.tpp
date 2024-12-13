@@ -32,6 +32,17 @@ Matrix<K>::Matrix(const std::initializer_list<K>& values) {
 	this->_cols = values.size();
 }
 
+// matrix with size constructor
+template <typename K>
+Matrix<K>::Matrix(size_t rows, size_t cols, K value) {
+	if (rows == 0 || cols == 0) {
+		throw MatrixException("Matrix can't be 0 rows or 0 cols.");
+	}
+	this->_rows = rows;
+	this->_cols = cols;
+	this->_data.resize(rows * cols, value);
+}
+
 // copy constructor
 template<typename K>
 Matrix<K>::Matrix(const Matrix<K>& copy) {
@@ -156,5 +167,47 @@ template <typename K>
 Matrix<K> Matrix<K>::operator*(K k) {
 	Matrix<K> result(*this);
 	result.scl(k);
+	return result;
+}
+
+template <typename K>
+Vector<K> Matrix<K>::mul_vec(Vector<K> vec) const {
+	if (_cols != vec.size()) {
+		throw MatrixException("You can only transform/map a vector with size equal to the number of columns of this matrix.");
+	}
+
+	Vector<K> result(_rows, 0);
+
+	// O(nm)
+	for (size_t i = 0; i < _rows; ++i) {
+		for (size_t j = 0; j < _cols; ++j) {
+			result[i] = std::fma(this->_data[i * _cols + j], vec[j], result[i]);
+		}
+	}
+
+	return result;
+}
+
+template <typename K>
+Matrix<K> Matrix<K>::mul_mat(Matrix<K> mat) const {
+	std::pair<size_t, size_t> shape = mat.shape();
+	size_t mat_rows = shape.first;
+	size_t mat_cols = shape.second;
+
+	if (_cols != mat_rows) {
+		throw MatrixException("You can only multiply a matrix with a matrix having same number of rows as its columns");
+	}
+
+	Matrix<K> result(_rows, mat_cols, 0);
+
+	// O(pmn)
+	for (size_t k = 0; k < mat_cols; ++k) {
+		for (size_t i = 0; i < _rows; ++i) {
+			for (size_t j = 0; j < _cols; ++j) {
+				result[i][k] = std::fma(this->_data[i * _cols + j], mat[j][k], result[i][k]);
+			}
+		}
+	}
+
 	return result;
 }
