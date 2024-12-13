@@ -61,6 +61,9 @@ class Matrix {
 		// trace
 		K trace(void) const;
 
+		// transpose
+		Matrix<K> transpose(void) const;
+
 	private:
 		// For operator[][] on a matrix
 		class RowProxy {

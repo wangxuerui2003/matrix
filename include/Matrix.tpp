@@ -225,3 +225,16 @@ K Matrix<K>::trace(void) const {
 
 	return t;
 }
+
+template <typename K>
+Matrix<K> Matrix<K>::transpose(void) const {
+	Matrix<K> result(_cols, _rows, 0);
+
+	for (size_t i = 0; i < _rows; ++i) {
+		for (size_t j = 0; j < _cols; ++j) {
+			result[j][i] = _data[i * _cols + j];
+		}
+	}
+
+	return result;
+}
