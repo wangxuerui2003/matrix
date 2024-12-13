@@ -58,6 +58,9 @@ class Matrix {
 		Vector<K> mul_vec(Vector<K> vec) const;
 		Matrix<K> mul_mat(Matrix<K> mat) const;
 
+		// trace
+		K trace(void) const;
+
 	private:
 		// For operator[][] on a matrix
 		class RowProxy {

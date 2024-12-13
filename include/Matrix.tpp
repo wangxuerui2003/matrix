@@ -211,3 +211,17 @@ Matrix<K> Matrix<K>::mul_mat(Matrix<K> mat) const {
 
 	return result;
 }
+
+template <typename K>
+K Matrix<K>::trace(void) const {
+	if (_rows != _cols) {
+		throw MatrixException("Trace only exists on square matrix.");
+	}
+
+	K t = 0;
+	for (size_t i = 0; i < _rows; ++i) {
+		t += _data[i * _cols + i];
+	}
+
+	return t;
+}
