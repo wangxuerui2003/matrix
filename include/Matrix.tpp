@@ -427,3 +427,21 @@ Matrix<K> Matrix<K>::inverse(void) {
 
 	return Matrix<K>(inverseMatrix, _rows, _cols);
 }
+
+template <typename K>
+size_t Matrix<K>::rank(void) {
+	Matrix<K> rref = this->row_echelon();
+	const std::vector<K>& rrefData = rref.getData();
+
+	size_t rank = 0;
+	for (size_t r = 0; r < _rows; ++r) {
+		for (size_t c = 0; c < _cols; ++c) {
+			if (rrefData[r * _cols + c] != 0) {
+				rank++;
+				break;
+			}
+		}
+	}
+
+	return rank;
+}

@@ -75,6 +75,9 @@ class Matrix {
 		// inverse
 		Matrix<K> inverse(void);
 
+		// rank
+		size_t rank(void);
+
 	private:
 		// For operator[][] on a matrix
 		class RowProxy {
