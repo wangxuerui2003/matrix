@@ -347,3 +347,38 @@ Matrix<K> Matrix<K>::row_echelon(void) {
 
 	return Matrix<K>(copyData, _rows, _cols);
 }
+
+template <typename K>
+static K detRecursive(std::vector<K>& data, size_t dim) {
+	if (dim == 1) {
+		return data[0];
+	} else if (dim == 2) {
+		return (data[0] * data[3]) - (data[1] * data[2]);
+	}
+
+	K det = 0;
+	int sign = 1;
+	for (size_t i = 0; i < dim; ++i) {
+		std::vector<K> forRecurse;
+		for (size_t j = 1; j < dim; ++j) {
+			for (size_t k = 0; k < dim; ++k) {
+				if (k == i) {
+					continue;
+				}
+				forRecurse.push_back(data[j * dim + k]);
+			}
+		}
+		det += sign * detRecursive(forRecurse, dim - 1) * data[0 * dim + i];
+		sign *= -1;
+	}
+
+	return det;
+}
+
+template <typename K>
+K Matrix<K>::determinant(void) {
+	if (_rows != _cols) {
+		throw MatrixException("Determinant undefined for non-square matrix.");
+	}
+	return detRecursive(_data, _rows);
+}

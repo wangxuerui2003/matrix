@@ -69,6 +69,9 @@ class Matrix {
 		// row echelon form
 		Matrix<K> row_echelon(void);
 		
+		// determinant
+		K determinant(void);
+		
 
 	private:
 		// For operator[][] on a matrix
