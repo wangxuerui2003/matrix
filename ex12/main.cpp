@@ -3,7 +3,7 @@
 #include "test.h"
 
 int main(void) {
-	TEST_TITLE("Test determinant");
+	TEST_TITLE("Test inverse");
 	try {
 		{
 			Matrix<float> u = {
