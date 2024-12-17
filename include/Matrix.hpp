@@ -47,14 +47,14 @@ class Matrix {
 		void sub(const Matrix<K>& m);
 		void scl(const K& a);
 
-		Matrix<K> operator-(K k);
+		// for accessing a certain element of the matrix, essentially just [][] on 2D array.
+		K& operator()(size_t r, size_t c);
+		const K& operator()(size_t r, size_t c) const;
+
 		Matrix<K> operator+(const Matrix<K>& other);
-		Matrix<K> operator+(K k);
 		Matrix<K> operator-(const Matrix<K>& other);
 		Matrix<K> operator*(K k);
 		Matrix<K> operator*(const Matrix<K>& other);
-		Matrix<K> operator/(float t);
-		Matrix<K> operator/(const Matrix<K>& other);
 
 		// linear map, matrix multiplication
 		Vector<K> mul_vec(Vector<K> vec) const;
@@ -77,46 +77,6 @@ class Matrix {
 
 		// rank
 		size_t rank(void);
-
-	private:
-		// For operator[][] on a matrix
-		class RowProxy {
-		private:
-			float* rowStart;
-			size_t rowLength;
-
-		public:
-			RowProxy(float* start, size_t length) : rowStart(start), rowLength(length) {}
-
-			float& operator[](size_t col) {
-				if (col >= rowLength) {
-					throw std::out_of_range("Column index out of range");
-				}
-				return rowStart[col];
-			}
-
-			const float& operator[](size_t col) const {
-				if (col >= rowLength) {
-					throw std::out_of_range("Column index out of range");
-				}
-				return rowStart[col];
-			}
-		};
-
-	public:
-		RowProxy operator[](size_t row) {
-			if (row >= _rows) {
-				throw std::out_of_range("Row index out of range");
-			}
-			return RowProxy(&_data[row * _cols], _cols);
-		}
-
-		const RowProxy operator[](size_t row) const {
-			if (row >= _rows) {
-				throw std::out_of_range("Row index out of range");
-			}
-			return RowProxy(&_data[row * _cols], _cols);
-		}
 
 	private:
 		std::vector<K> _data;

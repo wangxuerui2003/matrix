@@ -162,6 +162,22 @@ void Matrix<K>::scl(const K& a) {
 }
 
 template <typename K>
+K& Matrix<K>::operator()(size_t r, size_t c) {
+	if (r >= _rows || c >= _cols) {
+        throw std::out_of_range("Index out of bounds");
+    }
+    return _data[r * _cols + c];
+}
+
+template <typename K>
+const K& Matrix<K>::operator()(size_t r, size_t c) const {
+	if (r >= _rows || c >= _cols) {
+        throw std::out_of_range("Index out of bounds");
+    }
+    return _data[r * _cols + c];
+}
+
+template <typename K>
 Matrix<K> Matrix<K>::operator+(const Matrix<K>& other) {
 	Matrix<K> result(*this);
 	result.add(other);
@@ -216,7 +232,7 @@ Matrix<K> Matrix<K>::mul_mat(Matrix<K> mat) const {
 	for (size_t k = 0; k < mat_cols; ++k) {
 		for (size_t i = 0; i < _rows; ++i) {
 			for (size_t j = 0; j < _cols; ++j) {
-				result[i][k] = std::fma(this->_data[i * _cols + j], mat[j][k], result[i][k]);
+				result(i, k) = std::fma(this->_data[i * _cols + j], mat(j, k), result(i, k));
 			}
 		}
 	}
@@ -244,7 +260,7 @@ Matrix<K> Matrix<K>::transpose(void) const {
 
 	for (size_t i = 0; i < _rows; ++i) {
 		for (size_t j = 0; j < _cols; ++j) {
-			result[j][i] = _data[i * _cols + j];
+			result(j, i) = _data[i * _cols + j];
 		}
 	}
 
