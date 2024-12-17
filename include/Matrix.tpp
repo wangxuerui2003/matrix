@@ -382,3 +382,48 @@ K Matrix<K>::determinant(void) {
 	}
 	return detRecursive(_data, _rows);
 }
+
+/**
+ * row reduction method
+ * 
+ * construct the augmented matrix [A | I]
+ * and then use gaussian elimination to make the matrix into [I | A^-1]
+ */
+template <typename K>
+Matrix<K> Matrix<K>::inverse(void) {
+	if (_rows != _cols) {
+		throw MatrixException("Determinant undefined for non-square matrix.");
+	}
+
+	if (this->determinant() == 0) {
+		throw MatrixException("The matrix is not invertible.");
+	}
+
+	// construct the augmented matrix
+	std::vector<K> A = _data;
+	A.reserve(_rows * _cols * 2);
+	for (size_t i = 0; i < _rows; ++i) {
+		for (size_t j = 0; j < _cols; ++j) {
+			if (i == j) {
+				A.insert(A.begin() + i * _cols * 2 + _cols + j, 1);
+			} else {
+				A.insert(A.begin() + i * _cols * 2 + _cols + j, 0);
+			}
+		}
+	}
+
+	// get the rref for the augmented matrix
+	Matrix<K> rref = Matrix<K>(A, _rows, _cols * 2).row_echelon();
+	const std::vector<K>& rrefData = rref.getData();
+
+	// extract the right part (inverse matrix) from the augmented matrix
+	std::vector<K> inverseMatrix;
+	inverseMatrix.reserve(_rows * _cols);
+	for (size_t i = 0; i < _rows; ++i) {
+		for (size_t j = 0; j < _cols; ++j) {
+			inverseMatrix.push_back(rrefData[i * _cols * 2 + _cols + j]);
+		}
+	}
+
+	return Matrix<K>(inverseMatrix, _rows, _cols);
+}

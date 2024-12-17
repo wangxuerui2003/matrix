@@ -71,7 +71,9 @@ class Matrix {
 		
 		// determinant
 		K determinant(void);
-		
+
+		// inverse
+		Matrix<K> inverse(void);
 
 	private:
 		// For operator[][] on a matrix
