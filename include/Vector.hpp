@@ -48,14 +48,9 @@ class Vector {
 		void sub(const Vector<K>& v);
 		void scl(const K& a);
 
-		Vector<K> operator+(K k);
 		Vector<K> operator+(const Vector<K>& other);
-		Vector<K> operator-(K k);
 		Vector<K> operator-(const Vector<K>& other);
 		Vector<K> operator*(K k);
-		Vector<K> operator*(const Vector<K>& other);
-		Vector<K> operator/(K k);
-		Vector<K> operator/(const Vector<K>& other);
 
 		K& operator[](size_t index);
 
