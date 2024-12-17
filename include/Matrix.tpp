@@ -43,6 +43,18 @@ Matrix<K>::Matrix(size_t rows, size_t cols, K value) {
 	this->_data.resize(rows * cols, value);
 }
 
+// constructor from data
+template<typename K>
+Matrix<K>::Matrix(const std::vector<K>& data, size_t rows, size_t cols) {
+	if (data.size() != rows * cols) {
+		throw MatrixException("Invalid data size compared to rows and cols");
+	}
+
+	this->_data = data;
+	this->_rows = rows;
+	this->_cols = cols;
+}
+
 // copy constructor
 template<typename K>
 Matrix<K>::Matrix(const Matrix<K>& copy) {
@@ -237,4 +249,101 @@ Matrix<K> Matrix<K>::transpose(void) const {
 	}
 
 	return result;
+}
+
+template <typename K>
+static void swapRows(std::vector<K>& data, size_t rows, size_t cols, size_t row1, size_t row2) {
+	if (row1 > rows || row2 > rows) {
+		return;
+	}
+	size_t start1 = row1 * cols;
+	size_t start2 = row2 * cols;
+	std::swap_ranges(data.begin() + start1, data.begin() + start1 + cols, data.begin() + start2);
+}
+
+template <typename K>
+static void scaleRow(std::vector<K>& data, size_t rows, size_t cols, size_t row, float a) {
+	if (row > rows) {
+		return;
+	}
+	size_t start = row * cols;
+	size_t end = row * cols + cols;
+	for (size_t i = start; i < end; ++i) {
+		data[i] *= a;
+	}
+}
+
+template <typename K>
+static void addRowScl(std::vector<K>& data, size_t rows, size_t cols, size_t dest, size_t src, float scl) {
+	if (dest > rows || src > rows) {
+		return;
+	}
+
+	size_t destStart = dest * cols;
+	size_t srcStart = src * cols;
+	for (size_t i = 0; i < cols; ++i) {
+		data[destStart + i] += data[srcStart + i] * scl;
+	}
+}
+
+/**
+ * For each row r:
+ * 		1. Find the pivot in the current column:
+ * 			- Search rows from r to n − 1 to find the largest non-zero value in the column (for numerical stability).
+ * 			- Swap the row with the current row if necessary.
+ * 		2. Scale the row to make the pivot element 1 (optional).
+ * 		3. Eliminate all rows below the pivot by subtracting multiples of the pivot row.
+ * 		4. Move to the next row and column.
+ */
+template <typename K>
+Matrix<K> Matrix<K>::row_echelon(void) {
+	std::vector<K> copyData = _data;
+	size_t c = 0;
+	size_t r = 0;
+	while (r < _rows && c < _cols) {
+		// find the largest pivot in the current column to increase numerical stability
+		size_t largestPivotIndex = r * _cols + c;
+		for (size_t i = r + 1; i < _rows; ++i) {
+			size_t p = i * _cols + c;
+			if (std::abs(copyData[p]) > std::abs(copyData[largestPivotIndex])) {
+				largestPivotIndex = p;
+			}
+		}
+		if (copyData[largestPivotIndex] == 0) {
+			// current column all zeros, move to next column in the same row
+			c++;
+			continue;
+		}
+
+		size_t largestPivotRow = (largestPivotIndex - c) / _cols;
+		if (largestPivotRow != r) {
+			// swap the row with the largest pivot to the current row
+			swapRows<K>(copyData, _rows, _cols, r, largestPivotRow);
+		}
+		if (copyData[r * _cols + c] != 1) {
+			scaleRow<K>(copyData, _rows, _cols, r, 1 / copyData[r * _cols + c]);
+		}
+
+		// eliminate elements below the pivot
+		for (size_t i = 0; i < _rows; ++i) {
+			if (i == r) {
+				continue;
+			}
+			if (copyData[i * _cols + c] != 0) {
+				addRowScl<K>(copyData, _rows, _cols, i, r, -(copyData[i * _cols + c]));
+			}
+		}
+
+		// go to next row and column
+		c++;
+		r++;
+	}
+
+	for (size_t i = 0; i < copyData.size(); ++i) {
+		if (copyData[i] == -0.0f) {
+			copyData[i] = 0.0f;
+		}
+	}
+
+	return Matrix<K>(copyData, _rows, _cols);
 }

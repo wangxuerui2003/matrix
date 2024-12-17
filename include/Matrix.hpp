@@ -6,6 +6,7 @@
 #include <vector>
 #include <initializer_list>
 #include <exception>
+#include <algorithm>
 
 template <typename K>
 class Vector;
@@ -17,6 +18,7 @@ class Matrix {
 		Matrix(const std::initializer_list<std::initializer_list<K> >& values);
 		Matrix(const std::initializer_list<K>& values);
 		Matrix(size_t rows, size_t cols, K value);
+		Matrix(const std::vector<K>& data, size_t rows, size_t cols);
 
 		Matrix(const Matrix<K>& copy);
 		Matrix& operator=(const Matrix<K>& copy);
@@ -63,6 +65,10 @@ class Matrix {
 
 		// transpose
 		Matrix<K> transpose(void) const;
+
+		// row echelon form
+		Matrix<K> row_echelon(void);
+		
 
 	private:
 		// For operator[][] on a matrix
