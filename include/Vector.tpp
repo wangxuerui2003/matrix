@@ -151,7 +151,7 @@ K Vector<K>::dot(const Vector<K>& v) {
 	K product = 0;
 	const std::vector<K>& vData = v.getData();
 	for (size_t i = 0; i < _size; ++i) {
-		product = std::fma(_data[i], vData[i], product);
+		product = std::fmaf(_data[i], vData[i], product);
 	}
 
 	return product;

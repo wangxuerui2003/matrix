@@ -209,7 +209,7 @@ Vector<K> Matrix<K>::mul_vec(Vector<K> vec) const {
 	// O(nm)
 	for (size_t i = 0; i < _rows; ++i) {
 		for (size_t j = 0; j < _cols; ++j) {
-			result[i] = std::fma(this->_data[i * _cols + j], vec[j], result[i]);
+			result[i] = std::fmaf(this->_data[i * _cols + j], vec[j], result[i]);
 		}
 	}
 
@@ -232,7 +232,7 @@ Matrix<K> Matrix<K>::mul_mat(Matrix<K> mat) const {
 	for (size_t k = 0; k < mat_cols; ++k) {
 		for (size_t i = 0; i < _rows; ++i) {
 			for (size_t j = 0; j < _cols; ++j) {
-				result(i, k) = std::fma(this->_data[i * _cols + j], mat(j, k), result(i, k));
+				result(i, k) = std::fmaf(this->_data[i * _cols + j], mat(j, k), result(i, k));
 			}
 		}
 	}
