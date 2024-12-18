@@ -45,3 +45,28 @@ Vector<K> cross_product(Vector<K>& u, Vector<K>& v) {
 	K p2 = std::fmaf(u[0], v[1], -(std::fmaf(u[1], v[0], 0)));
 	return {p0, p1, p2};
 }
+
+Matrix<float> projection(float fov, float ratio, float near, float far) {
+	float scale = 1.0f / tanf32(fov / 2);
+	float xproj = scale / ratio;
+	float yproj = scale;
+	float z_depth_scale = -far / (far - near);
+	float z_depth_offset = (-near * far) / (far - near);
+	float perspective_sign = -1;
+
+	// row major order
+	// return {
+	// 	{xproj, 0, 0, 0},
+	// 	{0, yproj, 0, 0},
+	// 	{0, 0, z_depth_scale, z_depth_offset},
+	// 	{0, 0, perspective_sign, 0}
+	// };
+
+	// column major order
+	return {
+		{xproj, 0, 0, 0},
+		{0, yproj, 0, 0},
+		{0, 0, z_depth_scale, perspective_sign},
+		{0, 0, z_depth_offset, 0}
+	};
+}

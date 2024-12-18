@@ -21,6 +21,9 @@ float angle_cos(Vector<K>& u, Vector<K>& v);
 template <typename K>
 Vector<K> cross_product(Vector<K>& u, Vector<K>& v);
 
+// bonus: projection
+Matrix<float> projection(float fov, float ratio, float near, float far);
+
 #include "linalg.tpp"
 
 #endif
