@@ -32,7 +32,7 @@ Matrix<K>::Matrix(const std::initializer_list<K>& values) {
 	this->_cols = values.size();
 }
 
-// matrix with size constructor
+// matrix with size and default value constructor
 template <typename K>
 Matrix<K>::Matrix(size_t rows, size_t cols, K value) {
 	if (rows == 0 || cols == 0) {
@@ -43,7 +43,7 @@ Matrix<K>::Matrix(size_t rows, size_t cols, K value) {
 	this->_data.resize(rows * cols, value);
 }
 
-// constructor from data
+// constructor from existing data and dimensions
 template<typename K>
 Matrix<K>::Matrix(const std::vector<K>& data, size_t rows, size_t cols) {
 	if (data.size() != rows * cols) {
@@ -198,6 +198,13 @@ Matrix<K> Matrix<K>::operator*(K k) {
 	return result;
 }
 
+/**
+ * m - rows
+ * n - cols
+ * 
+ * O(nm) time
+ * O(1) space
+ */
 template <typename K>
 Vector<K> Matrix<K>::mul_vec(Vector<K> vec) const {
 	if (_cols != vec.size()) {
@@ -206,7 +213,6 @@ Vector<K> Matrix<K>::mul_vec(Vector<K> vec) const {
 
 	Vector<K> result(_rows, 0);
 
-	// O(nm)
 	for (size_t i = 0; i < _rows; ++i) {
 		for (size_t j = 0; j < _cols; ++j) {
 			result[i] = std::fmaf(this->_data[i * _cols + j], vec[j], result[i]);
@@ -216,6 +222,14 @@ Vector<K> Matrix<K>::mul_vec(Vector<K> vec) const {
 	return result;
 }
 
+/**
+ * m - A rows
+ * n - A cols, B rows
+ * p - B cols
+ * 
+ * O(nmp) time
+ * O(mp) space, for the result matrix
+ */
 template <typename K>
 Matrix<K> Matrix<K>::mul_mat(Matrix<K> mat) const {
 	std::pair<size_t, size_t> shape = mat.shape();
@@ -228,7 +242,6 @@ Matrix<K> Matrix<K>::mul_mat(Matrix<K> mat) const {
 
 	Matrix<K> result(_rows, mat_cols, 0);
 
-	// O(pmn)
 	for (size_t k = 0; k < mat_cols; ++k) {
 		for (size_t i = 0; i < _rows; ++i) {
 			for (size_t j = 0; j < _cols; ++j) {
@@ -240,6 +253,15 @@ Matrix<K> Matrix<K>::mul_mat(Matrix<K> mat) const {
 	return result;
 }
 
+/**
+ * The trace of a square matrix is the sum of the diagnal elements
+ * 
+ * \text{Tr}(A) = \sum_{i=1}^{n} a_{ii}
+ * 
+ * Uses:
+ * 		- Sum of eigenvalues
+ * 		- etc.
+ */
 template <typename K>
 K Matrix<K>::trace(void) const {
 	if (_rows != _cols) {
@@ -254,6 +276,11 @@ K Matrix<K>::trace(void) const {
 	return t;
 }
 
+/**
+ * A^T is a new matrix formed by swapping the rows and cols of A.
+ * 
+ * O(mn) time
+ */
 template <typename K>
 Matrix<K> Matrix<K>::transpose(void) const {
 	Matrix<K> result(_cols, _rows, 0);
@@ -267,6 +294,7 @@ Matrix<K> Matrix<K>::transpose(void) const {
 	return result;
 }
 
+// for finding the row echelon and determinant
 template <typename K>
 static void swapRows(std::vector<K>& data, size_t rows, size_t cols, size_t row1, size_t row2) {
 	if (row1 > rows || row2 > rows) {
@@ -277,6 +305,7 @@ static void swapRows(std::vector<K>& data, size_t rows, size_t cols, size_t row1
 	std::swap_ranges(data.begin() + start1, data.begin() + start1 + cols, data.begin() + start2);
 }
 
+// for finding the row echelon and determinant
 template <typename K>
 static void scaleRow(std::vector<K>& data, size_t rows, size_t cols, size_t row, float a) {
 	if (row > rows) {
@@ -289,6 +318,7 @@ static void scaleRow(std::vector<K>& data, size_t rows, size_t cols, size_t row,
 	}
 }
 
+// for finding the row echelon and determinant
 template <typename K>
 static void addRowScl(std::vector<K>& data, size_t rows, size_t cols, size_t dest, size_t src, float scl) {
 	if (dest > rows || src > rows) {
@@ -303,6 +333,10 @@ static void addRowScl(std::vector<K>& data, size_t rows, size_t cols, size_t des
 }
 
 /**
+ * Finding the reduced row echelon form of a matrix
+ * 
+ * The algorithm:
+ * 
  * For each row r:
  * 		1. Find the pivot in the current column:
  * 			- Search rows from r to n − 1 to find the largest non-zero value in the column (for numerical stability).
@@ -310,6 +344,11 @@ static void addRowScl(std::vector<K>& data, size_t rows, size_t cols, size_t des
  * 		2. Scale the row to make the pivot element 1 (optional).
  * 		3. Eliminate all rows below the pivot by subtracting multiples of the pivot row.
  * 		4. Move to the next row and column.
+ * 
+ * m - rows
+ * n - cols
+ * O(n^3) time
+ * O(nm) space for the result row echelon matrix
  */
 template <typename K>
 Matrix<K> Matrix<K>::row_echelon(void) {
@@ -340,7 +379,7 @@ Matrix<K> Matrix<K>::row_echelon(void) {
 			scaleRow<K>(copyData, _rows, _cols, r, 1 / copyData[r * _cols + c]);
 		}
 
-		// eliminate elements below the pivot
+		// eliminate elements below and above the pivot
 		for (size_t i = 0; i < _rows; ++i) {
 			if (i == r) {
 				continue;
@@ -355,6 +394,7 @@ Matrix<K> Matrix<K>::row_echelon(void) {
 		r++;
 	}
 
+	// make the possible -0.0f s to 0.0f, some 0 values are having the sign bit 1.
 	for (size_t i = 0; i < copyData.size(); ++i) {
 		if (copyData[i] == -0.0f) {
 			copyData[i] = 0.0f;
@@ -364,39 +404,81 @@ Matrix<K> Matrix<K>::row_echelon(void) {
 	return Matrix<K>(copyData, _rows, _cols);
 }
 
-template <typename K>
-static K detRecursive(std::vector<K>& data, size_t dim) {
-	if (dim == 1) {
-		return data[0];
-	} else if (dim == 2) {
-		return (data[0] * data[3]) - (data[1] * data[2]);
-	}
-
-	K det = 0;
-	int sign = 1;
-	for (size_t i = 0; i < dim; ++i) {
-		std::vector<K> forRecurse;
-		for (size_t j = 1; j < dim; ++j) {
-			for (size_t k = 0; k < dim; ++k) {
-				if (k == i) {
-					continue;
-				}
-				forRecurse.push_back(data[j * dim + k]);
-			}
-		}
-		det += sign * detRecursive(forRecurse, dim - 1) * data[0 * dim + i];
-		sign *= -1;
-	}
-
-	return det;
-}
-
+/**
+ * Geometric meaning of determinant:
+ * 		2D - area scaling factor
+ * 		3D - volume scaling factor
+ * 		nD - In general, for n-dimensional space, the determinant represents how the matrix scales the n-dimensional hypervolume.
+ * The sign of the determinant:
+ * 		det(A) > 0: the transformation preserves the orientation of the space
+ * 		det(A) < 0: the transformation reverses the orientation of the space (e.g. with a reflection)
+ * 		det(A) = 0: the transformation collapses the space into a lower dimension
+ * 
+ * Algebraic meaning of determinant:
+ * 		det(A) != 0:
+ * 			- the matrix is invertible (likely in geometric meaning,
+ * 				if the transformation doesn't collapses the space, the transformation should be reversible.)
+ * 			- the system Ax = b has unique solution.
+ * 		det(A) = 0:
+ * 			- the matrix is non-invertible (likely in geometric meaning,
+ * 				if the transformation collapses the space, the transformation should be non-reversible.)
+ * 			- the system Ax = b has no solution or infinitely many solutions
+ * 
+ * If det(A) = 0 means the rows or columns of A are linearly dependent.
+ * Meaning at least 1 row or column can be written as the linear combination of others.
+ * 
+ * 
+ * Using gaussian elimination to find the row echelon form without scaling, and find the determinant meanwhile.
+ * 
+ * O(n^3) time
+ * O(n^2) space, for the temporary data vector to find the row echelon form
+ */
 template <typename K>
 K Matrix<K>::determinant(void) {
 	if (_rows != _cols) {
 		throw MatrixException("Determinant undefined for non-square matrix.");
 	}
-	return detRecursive(_data, _rows);
+
+	std::vector<K> copyData = _data;
+	int sign = 1;
+	K det = 1;
+	size_t i = 0;
+	while (i < _cols) {
+		// find the largest pivot in the current column to increase numerical stability
+		size_t largestPivotIndex = i * _cols + i;
+		for (size_t j = i + 1; j < _rows; ++j) {
+			size_t p = j * _cols + i;
+			if (std::abs(copyData[p]) > std::abs(copyData[largestPivotIndex])) {
+				largestPivotIndex = p;
+			}
+		}
+		if (copyData[largestPivotIndex] == 0) {
+			// current column all zeros, determinant 0
+			return 0;
+		}
+
+		size_t largestPivotRow = (largestPivotIndex - i) / _cols;
+		if (largestPivotRow != i) {
+			// swap the row with the largest pivot to the current row
+			swapRows<K>(copyData, _rows, _cols, i, largestPivotRow);
+			sign *= -1;
+		}
+
+		// eliminate elements below the pivot
+		for (size_t j = i + 1; j < _rows; ++j) {
+			if (copyData[j * _cols + i] != 0) {
+				addRowScl<K>(copyData, _rows, _cols, j, i, (-(copyData[j * _cols + i]) / (copyData[i * _cols + i])));
+			}
+		}
+
+		// Multiply the determinant by the pivot (diagonal element)
+		det *= copyData[i * _cols + i];
+
+		// go to next row and col
+		i++;
+	}
+
+	return det * sign;
 }
 
 /**
@@ -404,6 +486,9 @@ K Matrix<K>::determinant(void) {
  * 
  * construct the augmented matrix [A | I]
  * and then use gaussian elimination to make the matrix into [I | A^-1]
+ * 
+ * O(n^3) time for the finding rref
+ * O(n^2) space for the temp data used for the augmented matrix and finding rref
  */
 template <typename K>
 Matrix<K> Matrix<K>::inverse(void) {
@@ -444,6 +529,10 @@ Matrix<K> Matrix<K>::inverse(void) {
 	return Matrix<K>(inverseMatrix, _rows, _cols);
 }
 
+/**
+ * Rank is the number of linearly independed columns of the matrix.
+ * Therefore after finding rref the number of pivot is the number of linearly independed columns.
+ */
 template <typename K>
 size_t Matrix<K>::rank(void) {
 	Matrix<K> rref = this->row_echelon();

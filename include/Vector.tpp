@@ -157,7 +157,6 @@ K Vector<K>::dot(const Vector<K>& v) {
 	return product;
 }
 
-
 template <typename K>
 float Vector<K>::norm_1(void) const {
 	return std::accumulate(_data.begin(), _data.end(), 0,

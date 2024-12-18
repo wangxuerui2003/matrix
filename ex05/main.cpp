@@ -15,6 +15,8 @@ int main(void) {
 			std::cout << cos << std::endl;
 		}
 
+		std::cout << std::endl;
+
 		{
 			Vector<float> u1 = {1.0f, 0.0f};
 			Vector<float> u2 = {0.0f, 1.0f};
@@ -23,6 +25,8 @@ int main(void) {
 			// 0.0
 			std::cout << cos << std::endl;
 		}
+
+		std::cout << std::endl;
 
 		{
 			Vector<float> u1 = {-1.0f, 1.0f};
@@ -33,6 +37,8 @@ int main(void) {
 			std::cout << cos << std::endl;
 		}
 
+		std::cout << std::endl;
+
 		{
 			Vector<float> u1 = {2.0f, 1.0f};
 			Vector<float> u2 = {4.0f, 2.0f};
@@ -41,6 +47,8 @@ int main(void) {
 			// 1.0
 			std::cout << cos << std::endl;
 		}
+
+		std::cout << std::endl;
 
 		{
 			Vector<float> u1 = {1.0f, 2.0f, 3.0f};

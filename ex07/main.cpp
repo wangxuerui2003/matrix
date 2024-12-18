@@ -3,7 +3,7 @@
 #include "test.h"
 
 int main(void) {
-	TEST_TITLE("Test linear map/transformation (multiply a vector to matrix / transform a vectjor with a matrix)");
+	TEST_TITLE("Test linear map/transformation (multiply a vector to matrix / transform a vector with a matrix)");
 	try {
 		std::cout << std::showpoint;
 		{

@@ -56,6 +56,7 @@ class Vector {
 
 		K dot(const Vector<K>& v);
 
+		// norms are ways to measure the "size" of a vector or "distance" from the origin
 		float norm_1(void) const;
 		float norm(void) const;
 		float norm_inf(void) const;
